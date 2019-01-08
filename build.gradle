@@ -1,0 +1,34 @@
+plugins {
+    id 'org.springframework.boot' version '2.0.6.RELEASE'
+    id 'java'
+}
+
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+jar {
+    baseName = 'multi-key-spring-cache-example'
+    version = '0.1.0'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile("org.projectlombok:lombok:1.18.0")
+    compile('org.springframework.boot:spring-boot-starter-cache')
+    compile("com.github.ben-manes.caffeine:caffeine")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile("org.spockframework:spock-core:1.1-groovy-2.4")
+    testCompile("org.spockframework:spock-spring:1.1-groovy-2.4")
+
+}
+
+configurations {
+    all*.exclude group: 'commons-logging', module: 'commons-logging' // replaced with jcl-over-slf4j
+    all*.exclude group: 'log4j', module: 'log4j' // replaced with log4j-over-slf4j
+
+    all*.exclude module: 'hsqldb'
+    all*.exclude module: 'slf4j-log4j12'
+}

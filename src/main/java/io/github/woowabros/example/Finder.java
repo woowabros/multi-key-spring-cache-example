@@ -1,7 +1,6 @@
 package io.github.woowabros.example;
 
 import io.github.woowabros.model.CacheExampleResponse;
-import io.github.woowabros.model.LocalCacheType;
 import io.github.woowabros.service.MultiKeyCacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ public class Finder {
         this.multiKeyCacheService = multiKeyCacheService;
     }
 
-    @Cacheable(cacheNames = LocalCacheType.CacheName.TEST)
+    @Cacheable(cacheNames = "test")
     public CacheExampleResponse find(Long key) {
         log.info("단건 캐싱 시작 - key: {}", key);
 
@@ -33,7 +32,7 @@ public class Finder {
         log.info("다건 캐싱 시작 - keys: {}", keys);
 
         return multiKeyCacheService.multiCacheGet(
-                LocalCacheType.CacheName.TEST,
+                "test",
                 Long.class,
                 CacheExampleResponse.class,
                 keys,

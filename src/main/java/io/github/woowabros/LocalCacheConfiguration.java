@@ -1,7 +1,7 @@
 package io.github.woowabros;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import io.github.woowabros.model.LocalCacheType;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCache;
@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
 
 
 @ComponentScan
@@ -23,17 +23,18 @@ public class LocalCacheConfiguration {
     public CacheManager cacheManager() {
         SimpleCacheManager cacheManager = new SimpleCacheManager();
 
-        List<CaffeineCache> caches = Arrays.stream(LocalCacheType.values())
-                .map(cache -> new CaffeineCache(cache.getCacheName(), Caffeine.newBuilder().recordStats()
-                                .expireAfterWrite(cache.getExpireTime(), cache.getExpireTimeUnit())
-                                .maximumSize(cache.getMaxSize())
-                                .build()
-                        )
-                    )
-                .collect(Collectors.toList());
+        List<CaffeineCache> caches = new ArrayList<>();
+
+        caches.add(new CaffeineCache("test", getTestCacheProperty()));
 
         cacheManager.setCaches(caches);
 
         return cacheManager;
+    }
+
+    private Cache<Object, Object> getTestCacheProperty() {
+        return Caffeine.newBuilder().recordStats()
+                .expireAfterWrite(10L, TimeUnit.MINUTES).maximumSize(100L)
+                .build();
     }
 }
